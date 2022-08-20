@@ -1,0 +1,4 @@
+[submodule "workers-rs"]
+	path = workers-rs
+	url = git@github.com:cloudflare/workers-rs
+	branch = zeb/r2-bindings

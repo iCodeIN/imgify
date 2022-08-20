@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="robots" content="noindex">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+    <link rel="stylesheet" href="/main.css">
+    <title>Imageset {{ id }}</title>
+</head>
+
+<body>
+    <div>
+        <div class="menu">
+            <a href="/" class="btn">New Upload</a>
+            <a href="/about" class="btn">About</a>
+            <a hidden href="javascript:deleteItem()" id="deletebtn" class="btn">Delete Imageset</a>
+        </div>
+        {% for image in images %}
+        <h2>{{ image }}</h2>
+        <img id="{{ image }}" src="/raw/{{ id }}/{{ image }}" alt="Image {{ image }}">
+        <br>
+        {% endfor %}
+    </div>
+</body>
+<script>
+    const deletebtn = document.getElementById('deletebtn');
+    const deletetoken = JSON.parse(window.localStorage.getItem("{{ id }}"))['revoketoken'];
+    if (deletetoken) {
+        deletebtn.hidden = false;
+    }
+    for (let [key, value] of Object.entries(window.localStorage)) {
+        if (JSON.parse(value)['added'] >= Date.now() + 604800) {
+            window.localStorage.removeItem(key);
+        }
+    }
+    async function deleteItem() {
+        let resp = await fetch("/api/delete/{{ id }}/" + deletetoken, { method: "POST" });
+        if (resp.ok) {
+            window.alert(await resp.text());
+            window.location.replace('/');
+        } else {
+            window.alert(await resp.text())
+        }
+    }
+</script>
+
+</html>

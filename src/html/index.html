@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./main.css">
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+    <title>Create New Imageset</title>
+</head>
+
+<body>
+    <div id="dropzone" class="droparea" ondrop="handleFileDrop(event)" ondragover="dragOverHandler(event)"
+        ondragleave="revertToDefault(event)">
+        <div>
+            <div>
+                Drag and drop your files here to upload!
+            </div>
+            <div>
+                <label for="inputfile" class="btn">Or, choose files to upload</label>
+                <input hidden type="file" id="inputfile" onchange="handleFileSelect()" multiple>
+            </div>
+        </div>
+</body>
+<script>
+    const dropzone = document.getElementById("dropzone");
+    const selectedfiles = document.getElementById("inputfile");
+    async function uploadFiles(files) {
+        const upload_form = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            let file = files[i];
+            console.log("Filename: " + file.name);
+            console.log("Type: " + file.type);
+            console.log("Size: " + file.size + " bytes");
+            upload_form.append("data", file, file.name)
+        }
+        let resp = await fetch("/api/new", {
+            body: upload_form,
+            method: "POST",
+        });
+        if (resp.status != 200) {
+            window.alert(await resp.text())
+        } else {
+            let json = await resp.json().catch(e => window.alert("Error redirecting: " + e));
+            window.localStorage.setItem(json['id'], JSON.stringify({ "revoketoken": json['revoke'], "added": Date.now() }));
+            window.location.replace('/' + json['id']);
+        }
+    }
+    async function handleFileSelect() {
+        await uploadFiles(selectedfiles.files);
+    }
+    async function handleFileDrop(ev) {
+        ev.preventDefault();
+        await uploadFiles(ev.dataTransfer.files);
+    }
+    async function dragOverHandler(ev) {
+        ev.preventDefault();
+        dropzone.classList.add("dropping")
+    }
+    async function revertToDefault(ev) {
+        dropzone.classList.remove("dropping")
+    }
+</script>
+
+</html>

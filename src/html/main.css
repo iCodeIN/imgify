@@ -1,0 +1,98 @@
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("https://cdn.valk.sh/jbmono.woff") format('woff');
+}
+
+html,
+body {
+    background: #000;
+    text-align: center;
+    color: #fff;
+    font-family: "JetBrains Mono", monospace;
+}
+
+a {
+    color: white;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: white;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: white;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:active {
+    color: white;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+code {
+    background-color: #222;
+    border-radius: 3px;
+    font-family: courier, monospace;
+    padding: 0 3px;
+}
+
+.btn {
+    text-decoration: none;
+    color: #fff;
+    margin: 6px;
+    padding: 8px 16px;
+    border: 1px solid #222;
+    border-radius: 4px;
+    transition: background-color 250ms ease-in-out;
+    font-size: 18px;
+    background-color: #000;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background-color: #111
+}
+
+.btn:active {
+    background-color: #222
+}
+
+.menu {
+    padding: 1%;
+    font-size: 200%;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.droparea {
+    font-size: xx-large;
+    margin: 10%;
+    min-height: 70%;
+}
+
+.block {
+    display: block;
+}
+
+.dropping {
+    color: aqua;
+    border: aqua;
+    border-radius: 1%;
+    border-style: dashed;
+}
+
+.paste {
+    text-align: left;
+    background-color: #222;
+    border-color: #eee;
+    border-style: inset;
+    border-radius: 5px;
+    border-width: 2px;
+    padding: 10px;
+}

@@ -1,0 +1,21 @@
+name = "imgify"
+workers_dev = true
+
+main = "build/worker/shim.mjs"
+compatibility_date = "2022-01-20"
+
+account_id = "10587e6bb7932116ebfce0b7c5d0178e"
+
+[vars]
+WORKERS_RS_VERSION = "0.0.9"
+
+[build]
+command = "worker-build --release"
+
+[triggers]
+crons = ["1 * * * *"]
+
+[[r2_buckets]]
+binding = 'imgify'
+bucket_name = 'imgify'
+preview_bucket_name = 'imgify-testing'

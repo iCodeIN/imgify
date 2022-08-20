@@ -1,0 +1,20 @@
+[package]
+name = "imgify"
+version = "0.0.1"
+edition = "2021"
+authors = ["valkyrie_pilot <valk@randomairborne.dev>"]
+description = "A cloudflare worker-powered pastebin!"
+repository = "https://github.com/randomairborne/cloudpaste"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+worker = { path = "./workers-rs/worker/" } # Remove this when https://github.com/cloudflare/workers-rs/pull/215 is stabilized
+tera = { version = "1", default-features = false }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+rand = "0.8"
+getrandom = { version = "*", features = ["js", "wasm-bindgen"] }
+console_error_panic_hook = "0.1"
