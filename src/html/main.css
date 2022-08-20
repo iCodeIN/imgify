@@ -18,6 +18,10 @@ code {
     padding: 0 3px;
 }
 
+img {
+    width: 80vw;
+}
+
 .btn {
     text-decoration: none;
     color: #fff;

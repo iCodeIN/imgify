@@ -31,12 +31,16 @@ pub async fn new(mut req: Request, ctx: RouteContext<()>) -> Result<Response> {
                     if f.size() > MAX_UPLOAD_BYTES {
                         return Response::error("File too large!", 400);
                     }
+                    let data = f.bytes().await?;
+                    if !infer::is_image(&data) {
+                        return Response::error("Files must be images!", 400)
+                    }
                     let mut metadata = HashMap::with_capacity(2);
                     metadata.insert("name".to_string(), f.name());
                     metadata.insert("revoke".to_string(), revoke.clone());
                     metadata.insert("type".to_string(), f.type_());
                     match bkt
-                        .put(format!("{id}/{}", f.name()), f.bytes().await?)
+                        .put(format!("{id}/{}", f.name()), data)
                         .custom_metdata(metadata)
                         .execute()
                         .await
