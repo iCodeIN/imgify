@@ -61,7 +61,7 @@ pub async fn raw(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
     }
     Response::error("Account Misconfigured, no imgify kv found", 500)
 }
-mod style {
+pub mod style {
     use worker::*;
     pub fn main(_req: Request, _ctx: RouteContext<()>) -> Result<Response> {
         let mut headers = Headers::new();

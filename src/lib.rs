@@ -18,7 +18,8 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
         .get("/about", |_, _| {
             Response::from_html(include_str!("html/about.html"))
         })
-        .get("/main.css", gets::style)
+        .get("/main.css", gets::style::main)
+        .get("/index.css", gets::style::submit)
         .get_async("/:id", gets::template)
         .get_async("/raw/:id/:name", gets::raw)
         .post_async("/api/delete/:id/:token", posts::delete)
