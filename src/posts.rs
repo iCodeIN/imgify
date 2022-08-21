@@ -61,7 +61,7 @@ pub async fn delete(mut _req: Request, ctx: RouteContext<()>) -> Result<Response
     if let Ok(bkt) = ctx.bucket(BUCKET) {
         let id = match ctx.param("id") {
             Some(val) => val,
-            None => return Response::error("No paste ID!", 400),
+            None => return Response::error("No imageset ID!", 400),
         };
         let token = match ctx.param("token") {
             Some(val) => val,
@@ -81,7 +81,7 @@ pub async fn delete(mut _req: Request, ctx: RouteContext<()>) -> Result<Response
             }
         }
 
-        return Response::ok(format!("Deleted paste {id}!"));
+        return Response::ok(format!("Deleted imageset {id}!"));
     }
     Response::error("Account Misconfigured, no CLOUDPASTE kv found", 500)
 }
