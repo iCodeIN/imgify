@@ -19,6 +19,7 @@
                 <label for="inputfile" class="btn">Or, choose files to upload</label>
                 <input hidden type="file" id="inputfile" onchange="handleFileSelect()" accept="image/*" multiple>
             </div>
+            <div id="err"></div>
         </div>
 </body>
 <script>
@@ -31,6 +32,13 @@
             console.log("Filename: " + file.name);
             console.log("Type: " + file.type);
             console.log("Size: " + file.size + " bytes");
+            if (!file.type.startsWith("image/")) {
+                dropzone.classList.remove("dropping");
+                dropzone.classList.add("dropfailed");
+                error("File " + file.name + " was not an image file!");
+                await new Promise(r => setTimeout(r, 5000));
+                return;
+            }
             upload_form.append("data", file, file.name)
         }
         let resp = await fetch("/api/new", {
@@ -38,9 +46,9 @@
             method: "POST",
         });
         if (resp.status != 200) {
-            window.alert(await resp.text())
+            error(await resp.text());
         } else {
-            let json = await resp.json().catch(e => window.alert("Error redirecting: " + e));
+            let json = await resp.json().catch(e => error("Error redirecting: " + e));
             window.localStorage.setItem(json['id'], JSON.stringify({ "revoketoken": json['revoke'], "added": Date.now() }));
             window.location.replace('/' + json['id']);
         }
@@ -58,6 +66,10 @@
     }
     async function revertToDefault(ev) {
         dropzone.classList.remove("dropping")
+    }
+    function error(e) {
+        let err = document.getElementById("err");
+        err.innerText = e;
     }
 </script>
 
