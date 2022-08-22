@@ -26,7 +26,9 @@ pub async fn template(_req: Request, ctx: RouteContext<()>) -> Result<Response> 
                 .map(|f| f.key().split_once('/').unwrap_or(("", "")).1.to_string())
                 .collect::<Vec<String>>(),
         );
-        if let Ok(page) = tera::Tera::one_off(include_str!("html/img.html"), &context, true) {
+        // Autoescape is disabled here because we percent-encode the filename (the only user input)
+        // already.
+        if let Ok(page) = tera::Tera::one_off(include_str!("html/img.html"), &context, false) {
             return Response::from_html(page);
         }
 
