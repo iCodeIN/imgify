@@ -33,7 +33,7 @@ pub async fn new(mut req: Request, ctx: RouteContext<()>) -> Result<Response> {
                     }
                     let data = f.bytes().await?;
                     if !infer::is_image(&data) {
-                        return Response::error("Files must be images!", 400)
+                        return Response::error("Files must be images!", 400);
                     }
                     let mut metadata = HashMap::with_capacity(2);
                     metadata.insert("name".to_string(), f.name());
