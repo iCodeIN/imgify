@@ -39,8 +39,9 @@ pub async fn new(mut req: Request, ctx: RouteContext<()>) -> Result<Response> {
                     metadata.insert("name".to_string(), f.name());
                     metadata.insert("revoke".to_string(), revoke.clone());
                     metadata.insert("type".to_string(), f.type_());
+                    let filename = urlencoding::encode(f.name());
                     match bkt
-                        .put(format!("{id}/{}", f.name()), data)
+                        .put(format!("{id}/{}", filename), data)
                         .custom_metdata(metadata)
                         .execute()
                         .await

@@ -18,4 +18,5 @@ infer = "0.9"
 serde = { version = "1", features = ["derive"] }
 rand = "0.8"
 getrandom = { version = "*", features = ["js", "wasm-bindgen"] }
+urlencoding = "2.1"
 console_error_panic_hook = "0.1"

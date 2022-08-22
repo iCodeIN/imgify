@@ -53,7 +53,6 @@ pub async fn raw(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
             Ok(val) => val,
             Err(e) => return error(&format!("R2 Error: {}", e), 500, true),
         };
-
         if let Some(value) = maybe_value {
             return Response::from_bytes(value.body().unwrap().bytes().await.unwrap());
         }

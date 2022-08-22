@@ -34,7 +34,7 @@ pub async fn clean(_req: ScheduledEvent, env: Env, _ctx: worker::ScheduleContext
     let bkt = env.bucket(BUCKET).unwrap();
     for obj in bkt.list().execute().await.unwrap().objects() {
         if obj.uploaded().as_millis() + SECONDS_IN_A_WEEK
-            < worker::js_sys::Date::now().round() as u64
+            > worker::js_sys::Date::now().round() as u64
         {
             if let Err(e) = bkt.delete(obj.key()).await {
                 console_error!("Error deleting bucket: {e}");
