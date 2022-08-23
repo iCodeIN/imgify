@@ -10,7 +10,7 @@ account_id = "10587e6bb7932116ebfce0b7c5d0178e"
 command = "worker-build --release"
 
 [triggers]
-crons = ["1 * * * *"]
+crons = ["0 * * * *"]
 
 [[r2_buckets]]
 binding = 'imgify'
