@@ -24,9 +24,14 @@ pub async fn template(_req: Request, ctx: RouteContext<()>) -> Result<Response> 
             &files
                 .iter()
                 .map(|f| {
-                    urlencoding::decode(f.key().split_once('/').unwrap_or(("", "(unable to split filename)")).1)
-                        .unwrap_or(std::borrow::Cow::Borrowed("(unable to decode filename)"))
-                        .into_owned()
+                    urlencoding::decode(
+                        f.key()
+                            .split_once('/')
+                            .unwrap_or(("", "(unable to split filename)"))
+                            .1,
+                    )
+                    .unwrap_or(std::borrow::Cow::Borrowed("(unable to decode filename)"))
+                    .into_owned()
                 })
                 .collect::<Vec<String>>(),
         );
@@ -74,6 +79,7 @@ pub async fn raw(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
     }
     Response::error("Account Misconfigured, no imgify kv found", 500)
 }
+
 pub mod style {
     use worker::*;
     pub fn main(_req: Request, _ctx: RouteContext<()>) -> Result<Response> {

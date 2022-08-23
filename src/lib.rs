@@ -24,8 +24,24 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
         .get_async("/raw/:id/:name", gets::raw)
         .post_async("/api/delete/:id/:token", posts::delete)
         .post_async("/api/new", posts::new)
+        .get_async("/api/test_clean", clean_test)
         .run(req, env)
         .await
+}
+
+pub async fn clean_test(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    let bkt = ctx.bucket(BUCKET).unwrap();
+    for obj in bkt.list().execute().await.unwrap().objects() {
+        if obj.uploaded().as_millis() + SECONDS_IN_A_WEEK
+            > worker::js_sys::Date::now().round() as u64
+        {
+            if let Err(e) = bkt.delete(obj.key()).await {
+                console_error!("Error deleting bucket: {e}");
+            }
+        }
+    }
+    Response::empty()
 }
 
 #[event(scheduled)]
