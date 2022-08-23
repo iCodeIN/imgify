@@ -6,15 +6,15 @@ pub async fn template(_req: Request, ctx: RouteContext<()>) -> Result<Response> 
     if let Ok(bkt) = ctx.bucket(BUCKET) {
         let key = match ctx.param("id") {
             Some(val) => val,
-            None => return error("No Image ID!", 400, true),
+            None => return error("No Image ID!", 400),
         };
         let files = match bkt.list().prefix(key).execute().await {
             Ok(val) => val.objects(),
-            Err(e) => return error(&format!("R2 Error: {}", e), 500, true),
+            Err(e) => return error(&format!("R2 Error: {}", e), 500),
         };
 
         if files.is_empty() {
-            return error("Imageset not found!", 404, true);
+            return error("Imageset not found!", 404);
         }
 
         let mut context = tera::Context::new();
@@ -24,9 +24,9 @@ pub async fn template(_req: Request, ctx: RouteContext<()>) -> Result<Response> 
             &files
                 .iter()
                 .map(|f| {
-                    urlencoding::decode(f.key().split_once('/').unwrap_or(("", "")).1)
-                        .unwrap()
-                        .to_string()
+                    urlencoding::decode(f.key().split_once('/').unwrap_or(("", "(unable to split filename)")).1)
+                        .unwrap_or(std::borrow::Cow::Borrowed("(unable to decode filename)"))
+                        .into_owned()
                 })
                 .collect::<Vec<String>>(),
         );
@@ -37,7 +37,6 @@ pub async fn template(_req: Request, ctx: RouteContext<()>) -> Result<Response> 
         return error(
             "Templating failed! (this is a bug, github.com/randomairborne/imgify)",
             500,
-            true,
         );
     }
     Response::error("Account Misconfigured, no imgify kv found", 500)
@@ -55,10 +54,21 @@ pub async fn raw(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
         };
         let maybe_value = match bkt.get(format!("{id}/{name}")).execute().await {
             Ok(val) => val,
-            Err(e) => return error(&format!("R2 Error: {}", e), 500, true),
+            Err(e) => return Response::error(&format!("R2 Error: {}", e), 500),
         };
         if let Some(value) = maybe_value {
-            return Response::from_bytes(value.body().unwrap().bytes().await.unwrap());
+            let body = if let Some(body) = value.body() {
+                body
+            } else {
+                return Response::error("Failed to get image body", 500);
+            };
+            let body_stream = match body.stream() {
+                Ok(stream) => stream,
+                Err(e) => {
+                    return Response::error(&format!("Failed to get body as stream: {e}"), 500)
+                }
+            };
+            return Response::from_stream(body_stream);
         }
         return Response::error("Image Not Found!", 404);
     }

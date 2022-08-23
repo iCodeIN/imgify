@@ -60,20 +60,15 @@ fn randstr(length: usize) -> String {
     result
 }
 
-fn error(err: &str, statuscode: u16, html: bool) -> Result<Response> {
-    if html {
-        let mut context = tera::Context::new();
-        context.insert("error", err);
-        let mut headers = Headers::new();
-        headers.append("Content-Type", "text/html")?;
-        if let Ok(resp_html) = tera::Tera::one_off(include_str!("html/error.html"), &context, true)
-        {
-            return Ok(Response::error(resp_html, statuscode)?.with_headers(headers));
-        }
-        Response::error(err, statuscode)
-    } else {
-        Response::error(err, statuscode)
+fn error(err: &str, statuscode: u16) -> Result<Response> {
+    let mut context = tera::Context::new();
+    context.insert("error", err);
+    let mut headers = Headers::new();
+    headers.append("Content-Type", "text/html")?;
+    if let Ok(resp_html) = tera::Tera::one_off(include_str!("html/error.html"), &context, true) {
+        return Ok(Response::error(resp_html, statuscode)?.with_headers(headers));
     }
+    Response::error(err, statuscode)
 }
 
 fn log_request(req: &Request) {
