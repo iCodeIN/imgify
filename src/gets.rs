@@ -67,13 +67,13 @@ pub async fn raw(_req: Request, ctx: RouteContext<()>) -> Result<Response> {
             } else {
                 return Response::error("Failed to get image body", 500);
             };
-            let body_stream = match body.stream() {
+            let body_stream = match body.bytes() {
                 Ok(stream) => stream,
                 Err(e) => {
-                    return Response::error(&format!("Failed to get body as stream: {e}"), 500)
+                    return Response::error(&format!("Failed to get body as bytes: {e}"), 500)
                 }
             };
-            return Response::from_stream(body_stream);
+            return Response::from_bytes(body_stream);
         }
         return Response::error("Image Not Found!", 404);
     }
